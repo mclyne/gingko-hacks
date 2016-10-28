@@ -1,0 +1,91 @@
+<script type="text/javascript">
+
+/** 
+
+This is a quick fix for the bug in Gingko's output of
+View As > HTML;
+
+Note: The function just exits if interface changes so much
+      that the searches will no longer work
+
+**/
+
+(function(){
+
+  /* Set the View As > HTML URL */
+
+  var loc = window.location.href;
+  var prefLen = 22; /* for "https://gingkoapp.com/ */
+
+  var vaUrl = loc.substring (prefLen) + ".html";
+
+
+  /* Set the Export > HTML URL */
+
+  var appId, exUrl;
+  var links = document.getElementsByTagName ("a");
+  var found = false;
+
+  /* Search for <a href="/clone/..."> */
+
+  for (i=0; i<links.length; i++) {
+
+    var link = links[i];
+    var href = link.getAttribute("href");
+
+    if (href == null || href.length < 8) continue;
+
+    if (href.substring (0, 7) == "/clone/") {
+
+      appId = href.substring (7);
+      found = true;
+      break;
+    }
+  }
+
+  /* Return if /clone/ not found (is not public URL */
+
+  if (found != true) return;
+
+  exUrl = "export/" + appId + ".html";
+
+
+  /* The View As list has class save-as-dropdown */
+
+  var sad = document.getElementsByClassName 
+            ("save-as-dropdown");
+
+  if (sad.length == 0) return;
+
+  /* Get list of View As elements */
+
+  list = sad[0].getElementsByTagName ("li");
+
+  if (list.length == 0) return;
+
+  /* Find View As HTML list item */
+
+  for (var i=0; i<list.length; i++) {
+
+    /* Get the link */
+
+    var item = list[i];
+    var links = item.getElementsByTagName ("a");
+
+    if (links.length == 0) return;
+
+    var link = links[0];
+
+    /* If link is vaUrl, set to exUrl and return */
+
+    if (link.getAttribute ("href") == vaUrl) {
+
+      link.setAttribute ("href", exUrl);
+
+      return;
+    }
+  }
+
+})();
+
+</script>
